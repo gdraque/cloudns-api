@@ -131,10 +131,12 @@ function process_arguments() {
 
 function check_environment_variables() {
   local ERROR_COUNT=0
-  if [ -n CLOUDNS_API_SUB_ID ]; then
+  if [ -z ${CLOUDNS_API_ID+z} ]; then
     local REQUIRED_VARIABLES=( CLOUDNS_API_SUB_ID CLOUDNS_PASSWORD )
-  else
+  elif [ -z ${CLOUDNS_API_SUB_ID+z} ]; then
     local REQUIRED_VARIABLES=( CLOUDNS_API_ID CLOUDNS_PASSWORD )
+  else
+    local REQUIRED_VARIABLES=( CLOUDNS_API_SUB_ID CLOUDNS_API_ID CLOUDNS_PASSWORD )
   fi
   for REQUIRED_VARIABLE in ${REQUIRED_VARIABLES[@]}; do
     if $( builtin eval test -z \${${REQUIRED_VARIABLE}} ); then
@@ -148,7 +150,7 @@ function check_environment_variables() {
 }
 
 function set_auth_post_data() {
-  if [ -n CLOUDNS_API_SUB_ID ]; then
+  if [ -z ${CLOUDNS_API_ID+z} ]; then
     AUTH_POST_DATA="-d sub-auth-id=${CLOUDNS_API_SUB_ID} -d auth-password=${CLOUDNS_PASSWORD}"
   else
     AUTH_POST_DATA="-d auth-id=${CLOUDNS_API_ID} -d auth-password=${CLOUDNS_PASSWORD}"
